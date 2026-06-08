@@ -31,6 +31,48 @@ Every contributed rule must:
    - `level` — `low` / `medium` / `high` / `critical`
 5. Be tagged with at least one **MITRE ATT&CK** technique.
 
+## Rule template
+
+Copy this skeleton and fill it in. Base rule(s) and the correlation block go in the **same file**, separated by `---`.
+
+```yaml
+# --- Base rule(s): the single events the correlation builds on --------------
+title: <Base Event Title>
+name: <base_rule_name>          # referenced by the correlation below
+logsource:
+    product: <e.g. windows>
+    service: <e.g. security>    # or use: category: process_creation
+detection:
+    selection:
+        <Field>: <value>
+    condition: selection
+---
+# --- Correlation rule: the multi-event logic --------------------------------
+title: <Correlation Rule Title>
+id: <generate-a-fresh-uuid-v4>
+status: experimental
+description: >
+    <What it detects and why it matters.>
+author: <your name or handle>
+references:
+    - https://attack.mitre.org/techniques/Txxxx/
+tags:
+    - attack.<tactic>
+    - attack.txxxx
+correlation:
+    type: <event_count | value_count | temporal | temporal_ordered>
+    rules:
+        - <base_rule_name>      # list multiple for temporal / temporal_ordered
+    group-by:
+        - <Field>
+    timespan: <e.g. 10m>
+    condition:
+        gte: <N>                # for value_count, also add:  field: <Field>
+falsepositives:
+    - <realistic false positive scenario>
+level: <low | medium | high | critical>
+```
+
 ## File naming
 
 Use lowercase, words separated by underscores: `platform_short-description.yml`
